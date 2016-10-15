@@ -87,46 +87,81 @@
     (+ (fib (- n 1)) (fib (- n 2)))))
 
 (defn my-repeat [how-many-times what-to-repeat]
-  (if (> how-many-times 0)
-    (cons what-to-repeat (my-repeat (- how-many-times 1) what-to-repeat))))
+  (if (<= how-many-times 0)
+    '()
+    (conj (my-repeat (dec how-many-times) what-to-repeat) what-to-repeat)))
 
 (defn my-range [up-to]
-  (if (> up-to 0)
-    (cons (- up-to 1) (my-range (- up-to 1)))))
+  (if (<= up-to 0)
+    '()
+    (cons
+     (dec up-to)
+     (my-range (dec up-to)))))
 
 (defn tails [a-seq]
   (if (empty? a-seq)
-    []
-    (cons a-seq (tails (rest a-seq)))))
+    '(())
+    (cons (seq a-seq) (tails (rest a-seq)))))
 
 (defn inits [a-seq]
   (if (empty? a-seq)
-    []
-    (cons a-seq (tails (reverse (rest (reverse a-seq)))))))
+    '(())
+    (reverse (map reverse (tails (reverse a-seq))))))
 
 (defn rotations [a-seq]
-  [:-])
+  (if (empty? a-seq)
+    '(())
+    (rest (map concat (tails a-seq) (inits a-seq)))))
+
+(defn rotations [a-seq]
+  (if (empty? a-seq)
+    '(())
+    (rest (map concat (tails a-seq) (inits a-seq)))))
 
 (defn my-frequencies-helper [freqs a-seq]
-  [:-])
+  (if (empty? a-seq)
+    freqs
+    (let [n (first a-seq)
+          freqs-2 (if (contains? freqs n)
+                    (assoc freqs n (inc (freqs n)))
+                    (assoc freqs n 1))]
+      (my-frequencies-helper freqs-2 (rest a-seq)))))
 
 (defn my-frequencies [a-seq]
-  [:-])
+  (my-frequencies-helper {} a-seq))
 
 (defn un-frequencies [a-map]
-  [:-])
+  (if (empty? a-map)
+    '()
+    (let [[a-key a-value] (first a-map)]
+      (concat (repeat a-value a-key) (un-frequencies (rest a-map))))))
 
 (defn my-take [n coll]
-  [:-])
+  (if (or
+       (empty? coll)
+       (<= n 0))
+    '()
+    (conj (my-take (dec n) (rest coll)) (first coll))))
 
 (defn my-drop [n coll]
-  [:-])
+  (if (or
+       (empty? coll)
+       (<= n 0))
+    coll
+    (my-drop (dec n) (rest coll))))
 
 (defn halve [a-seq]
-  [:-])
+  (let [half (int (/ (count a-seq) 2))]
+    [(my-take half a-seq) (my-drop half a-seq)]))
 
 (defn seq-merge [a-seq b-seq]
-  [:-])
+  (let [[x & xs] a-seq
+        [y & ys] b-seq]
+    (cond
+     (empty? a-seq) b-seq
+     (empty? b-seq) a-seq
+     (< x y) (cons x (seq-merge xs b-seq))
+     :else (cons y (seq-merge a-seq ys)))))
 
 (defn merge-sort [a-seq]
   [:-])
